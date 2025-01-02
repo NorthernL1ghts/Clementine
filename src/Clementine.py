@@ -15,7 +15,7 @@ class ApplicationCommandLineArgs:
         return self.Args[index]
 
 class ApplicationSpecification:
-    def __init__(self, Name="Clementine", Version=CT_VERSION, Width=800, Height=600, Author="NorthernL1ghts", Contact="bizn0rth3rnl1ghts@gmail.com", WorkingDirectory="", CommandLineArgs=None):
+    def __init__(self, Name="Clementine", Version=CT_VERSION, Width=1200, Height=800, Author="NorthernL1ghts", Contact="bizn0rth3rnl1ghts@gmail.com", WorkingDirectory="", CommandLineArgs=None):
         self.Name = Name
         self.Version = Version
         self.Width = Width
