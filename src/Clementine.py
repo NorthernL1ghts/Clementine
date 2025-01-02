@@ -3,12 +3,7 @@ import threading
 import time
 import dearpygui.dearpygui as dpg
 from Base import *
-
-def CT_ASSERT(condition, message):
-    assert condition, message
-
-def CT_CORE_ASSERT(condition, message):
-    assert condition, message
+from Assert import *
 
 class ApplicationCommandLineArgs:
     def __init__(self, count=0, args=None):
