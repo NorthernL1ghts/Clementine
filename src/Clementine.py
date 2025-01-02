@@ -1,18 +1,8 @@
 import sys
 import threading
 import time
-import platform
 import dearpygui.dearpygui as dpg
-
-CT_VERSION = "1.0.0"
-CT_ARCHITECTURE = "x64"
-CT_DEBUG = True
-CT_DIST = False
-CT_RELEASE = False
-
-CT_PLATFORM_WINDOWS = platform.system() == "Windows"
-CT_PLATFORM_LINUX = platform.system() == "Linux"
-CT_PLATFORM_MAC = platform.system() == "Darwin"
+from Base import *
 
 def CT_ASSERT(condition, message):
     assert condition, message
