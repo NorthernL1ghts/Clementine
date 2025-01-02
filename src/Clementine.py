@@ -1,6 +1,7 @@
 import sys
 import threading
 import time
+import dearpygui.dearpygui as dpg
 
 CT_VERSION = "1.0.0"
 CT_ARCHITECTURE = "x64"
@@ -24,7 +25,7 @@ class ApplicationCommandLineArgs:
         return self.Args[index]
 
 class ApplicationSpecification:
-    def __init__(self, Name="Hazel Application", Version=CT_VERSION, Width=800, Height=600, Author="NorthernL1ghts", Contact="bizn0rth3rnl1ghts@gmail.com", WorkingDirectory="", CommandLineArgs=None):
+    def __init__(self, Name="Clementine", Version=CT_VERSION, Width=800, Height=600, Author="NorthernL1ghts", Contact="bizn0rth3rnl1ghts@gmail.com", WorkingDirectory="", CommandLineArgs=None):
         self.Name = Name
         self.Version = Version
         self.Width = Width
@@ -84,8 +85,21 @@ class Application:
     def Run(self):
         global g_ApplicationRunning
         g_ApplicationRunning = True
+
+        dpg.create_context()
+        dpg.create_viewport(title=self.m_Specification.Name, width=self.m_Specification.Width, height=self.m_Specification.Height)
+        dpg.setup_dearpygui()
+        dpg.show_viewport()
+
+        with dpg.window(label="Main Window"):
+            dpg.add_text("Hello, Clementine!")
+            dpg.add_button(label="Close", callback=self.Close)
+
         while self.m_Running:
+            dpg.render_dearpygui_frame()
             self.ExecuteMainThreadQueue()
+
+        dpg.destroy_context()
 
     def Close(self):
         self.m_Running = False
