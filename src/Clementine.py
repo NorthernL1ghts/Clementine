@@ -50,11 +50,42 @@ class ApplicationSpecification:
 
 class PerformanceTimers:
     def __init__(self):
-        self.MainThreadWorkTime = 0.0
-        self.MainThreadWaitTime = 0.0
+        self.m_MainThreadWorkTime = 0.0
+        self.m_MainThreadWaitTime = 0.0
 
     def GetTime(self):
         return time.time()
+
+class DearImGuiLayer:
+    def __init__(self):
+        self.m_ContextCreated = False
+
+    def CreateContext(self):
+        if not self.m_ContextCreated:
+            dpg.create_context()
+            self.m_ContextCreated = True
+
+    def DestroyContext(self):
+        if self.m_ContextCreated:
+            dpg.destroy_context()
+            self.m_ContextCreated = False
+
+    def CreateViewport(self, title, width, height):
+        dpg.create_viewport(title=title, width=width, height=height)
+
+    def Setup(self):
+        dpg.setup_dearpygui()
+
+    def ShowViewport(self):
+        dpg.show_viewport()
+
+    def Render(self):
+        dpg.render_dearpygui_frame()
+
+    def AddMainWindow(self, callback):
+        with dpg.window(label="Main Window"):
+            dpg.add_text("Hello, Clementine!")
+            dpg.add_button(label="Close", callback=callback)
 
 class Application:
     s_Instance = None
@@ -68,6 +99,7 @@ class Application:
         self.m_Specification = specification
         self.m_MainThreadQueue = []
         self.m_MainThreadQueueMutex = threading.Lock()
+        self.m_DearImGuiLayer = DearImGuiLayer()
         Application.s_Instance = self
         Application.s_MainThreadID = threading.get_ident()
 
@@ -91,20 +123,17 @@ class Application:
         global g_ApplicationRunning
         g_ApplicationRunning = True
 
-        dpg.create_context()
-        dpg.create_viewport(title=self.m_Specification.Name, width=self.m_Specification.Width, height=self.m_Specification.Height)
-        dpg.setup_dearpygui()
-        dpg.show_viewport()
-
-        with dpg.window(label="Main Window"):
-            dpg.add_text("Hello, Clementine!")
-            dpg.add_button(label="Close", callback=self.Close)
+        self.m_DearImGuiLayer.CreateContext()
+        self.m_DearImGuiLayer.CreateViewport(self.m_Specification.Name, self.m_Specification.Width, self.m_Specification.Height)
+        self.m_DearImGuiLayer.Setup()
+        self.m_DearImGuiLayer.ShowViewport()
+        self.m_DearImGuiLayer.AddMainWindow(self.Close)
 
         while self.m_Running:
-            dpg.render_dearpygui_frame()
+            self.m_DearImGuiLayer.Render()
             self.ExecuteMainThreadQueue()
 
-        dpg.destroy_context()
+        self.m_DearImGuiLayer.DestroyContext()
 
     def Close(self):
         self.m_Running = False
